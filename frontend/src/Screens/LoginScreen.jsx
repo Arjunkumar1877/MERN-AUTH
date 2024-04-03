@@ -1,17 +1,44 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLoginMutation } from '../slices/usersApiSlice';
+import { setCredentials } from '../slices/authSlice';
+import { ToastContainer, toast } from 'react-toastify';
+
+
+
 
 const LoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const submitHandler = async()=>{
+    const [login, { isLoading}] = useLoginMutation();
+
+    const userInfo = useSelector((state) => state.auth);
+    const submitHandler = async(e)=>{
         e.preventDefault();
-        console.log("submit");
+     try {
+         const res = await login({email,password}).unwrap();
+         dispatch(setCredentials({...res}))
+         navigate("/")
+     } catch (err) {
+      toast(err.data);
+      console.log(err)
+     }
     }
-  return (
+
+    useEffect(()=>{
+      if(userInfo){
+        navigate('/');
+      }
+    }, [navigate, userInfo])
+
+
+    return (
     <FormContainer>
       <h1>Sign In</h1>
       <Form onSubmit={submitHandler}>

@@ -13,8 +13,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // import { Provider } from 'react-redux';
 import HomeScreen from './Screens/HomeScreen';
 import LoginScreen from './Screens/LoginScreen.jsx';
-// import LoginScreen from './screens/LoginScreen.jsx';
-// import RegisterScreen from './screens/RegisterScreen.jsx';
+import Registerscreen from './Screens/RegisterScreen.jsx';
+import store from './store.js';
+import { Provider } from 'react-redux';
 // import ProfileScreen from './screens/ProfileScreen.jsx';
 // import PrivateRoute from './components/PrivateRoute.jsx';
 
@@ -23,7 +24,7 @@ const router = createBrowserRouter(
     <Route path='/' element={<App />}>
       <Route index={true} path='/' element={<HomeScreen />} />
       <Route path='/login' element={<LoginScreen/>} />
-      <Route path='/register' element={"hello"} />
+      <Route path='/register' element={<Registerscreen />} />
       {/* <Route path='' element={<PrivateRoute />}>
         <Route path='/profile' element={<ProfileScreen />} />
       </Route> */}
@@ -34,7 +35,9 @@ const router = createBrowserRouter(
 ReactDOM.createRoot(document.getElementById('root')).render(
   
     <React.StrictMode>
-      <RouterProvider router={router} />
+     <Provider store={store}>
+     <RouterProvider router={router} />
+     </Provider>
     </React.StrictMode>
  
 );
