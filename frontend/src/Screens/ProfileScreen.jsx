@@ -4,12 +4,12 @@ import { Form, Button, Row, Col } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../components/Loader';
-import { useRegisterMutation } from '../slices/usersApiSlice';
+import {  useUpdateUserMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { toast } from 'react-toastify';
 
 
-const Registerscreen = () => {
+const ProfileScreen = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -17,27 +17,33 @@ const Registerscreen = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { userInfo } = useSelector((state) => state.auth1);
-    const [register, { isLoading }] = useRegisterMutation();
+    const [updateProfile, { isLoading }] = useUpdateUserMutation();
 
     useEffect(()=>{
-      if(userInfo){
-        navigate('/');
-      }
-    }, [navigate, userInfo])
+      setName(userInfo.name);
+      setEmail(userInfo.email);
+
+    }, [userInfo.setName, userInfo.setEmail])
 
     const submitHandler = async(e)=>{
         e.preventDefault();
        if(password !== confirmPassword){
         toast("password not match !");
        }else{
-        try {
-          const res = await register({name, email, password}).unwrap();
-          dispatch(setCredentials({...res}))
-          navigate('/');
-        } catch (error) {
-          toast(error.message)
-          console.log(error.message)
-        }
+       try {
+     const res = await updateProfile({
+        _id: userInfo._id,
+        name, 
+        email,
+        password
+     }).unwrap();
+
+     dispatch(setCredentials({...res}));
+     toast.success("Profile Updated");
+    } catch (error) {
+        toast.error(error.message);
+        console.log(error.message)
+       }
        }
     }
   return (
@@ -71,18 +77,12 @@ const Registerscreen = () => {
    {isLoading && <Loader />}
 
  <Button type='submit' variant='primary' className='mt-3'>
-    Sign Up
+   Update
  </Button>
-
-<Row className='py-3'>
-    <Col>
-      Already resgistered ? <Link to={"/login"}>Login</Link>
-    </Col>
-</Row>
 
       </Form>
     </FormContainer>
   )
 }
 
-export default Registerscreen;
+export default ProfileScreen;
